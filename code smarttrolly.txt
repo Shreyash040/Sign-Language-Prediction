@@ -1,0 +1,304 @@
+
+#include<WiFiClient.h>
+
+#include <LiquidCrystal.h>
+
+LiquidCrystal lcd(12,11,5,4,3,2);
+#include<Wire.h>
+//LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+const char* ssid = "admin";//Replace with your network SSID
+const char* password = "12345678";//Replace with your network password
+
+
+
+String page = "";
+char input[12];
+int count = 0;
+
+ 
+ 
+int a;
+int p1=0,p2=0,p3=0,p4=0,p5=0;
+int c1=0,c2=0,c3=0,c4=0,c5=0;
+
+double total = 0;
+int count_prod = 0;
+void setup()
+{
+  pinMode(9,INPUT_PULLUP);
+  pinMode(10,OUTPUT);
+  
+  Serial.begin(9600);
+ //Serial.begin(9600);
+lcd.begin(16, 2);
+lcd.clear();
+  
+ // lcd.begin(16, 2);
+ // lcd.init();
+//  lcd.backlight();
+  lcd.setCursor(0, 0);
+  lcd.print("   WELCOME TO       ");
+  lcd.setCursor(0, 1);
+  lcd.print("   SMART CART       ");
+
+  delay(2000);
+
+  lcd.clear();
+
+ 
+ 
+  
+  lcd.setCursor(0, 0);
+  lcd.print(" PLZ ADD ITEMS     ");
+  lcd.setCursor(0, 1);
+  lcd.print("    TO CART          ");
+
+
+}
+void loop()
+{
+  int a=digitalRead(9);
+  if (Serial.available())
+  {
+    count = 0;
+    while (Serial.available() && count < 12)
+    {
+      input[count] = Serial.read();
+      count++;
+      delay(5);
+    }
+    if (count == 12)
+    {
+      if ((strncmp(input, "1F004DC79702", 12) == 0) && (a == 1))
+      {
+        lcd.setCursor(0, 0);
+        lcd.print("Biscuit Added       ");
+        lcd.setCursor(0, 1);
+        lcd.print("Price(Rs):35.00      ");
+        p1++;
+        digitalWrite(10,HIGH);
+        delay(2000);
+        total = total + 35.00;
+        count_prod++;
+        digitalWrite(10,LOW);
+        lcd.clear();
+      }
+      else if ((strncmp(input, "1F004DC79702", 12) == 0) && (a == 0))
+      {
+        if(p1>0)
+        {
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("Biscuit Removed!!!        ");
+        digitalWrite(4,HIGH);
+        delay(2000);
+        p1--;
+        total = total - 35.00;
+        count_prod--;
+        lcd.clear();
+        digitalWrite(10,LOW);
+        }
+        else
+        {
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("Not in cart!!!        ");
+        digitalWrite(10,HIGH);
+        delay(2000);
+        digitalWrite(10,LOW);
+        lcd.clear();
+        }
+      }
+      else if ((strncmp(input, "1F004A621A2D", 12) == 0) && (a == 1))
+      {
+        lcd.setCursor(0, 0);
+        lcd.print("Soap Added          ");
+        lcd.setCursor(0, 1);
+        lcd.print("Price(Rs):38.00         ");
+        total = total + 38.00;
+        digitalWrite(10,HIGH);
+        delay(2000);
+        p2++;
+        count_prod++;
+        digitalWrite(10,LOW);
+        lcd.clear();
+      }
+      else if ((strncmp(input, "1F004A621A2D", 12) == 0) && (a == 0))
+      {
+         if(p2>0)
+        {
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("Soap Removed!!!        ");
+        digitalWrite(10,HIGH);
+        delay(2000);
+        p2--;
+        total = total - 38.00;
+        count_prod--;
+        lcd.clear();
+        digitalWrite(10,LOW);
+        }
+        else
+        {
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("Not in cart!!!        ");
+        digitalWrite(10,HIGH);
+        delay(2000);
+        lcd.clear();
+        digitalWrite(10,LOW);
+        }
+      }
+      else if ((strncmp(input, "1F004DF963C8", 12) == 0) && (a == 1))
+      {
+        lcd.setCursor(0, 0);
+        lcd.print("Rice(1KG) Added       ");
+        lcd.setCursor(0, 1);
+        lcd.print("Price(Rs):55.00      ");
+        total = total + 55.00;
+        digitalWrite(10,HIGH);
+        delay(2000);
+        count_prod++;
+        p3++;
+        lcd.clear();
+        digitalWrite(10,LOW);
+      }
+      else if ((strncmp(input, "1F004DF963C8", 12) == 0) && (a==0))
+      {
+        if(p3>0)
+        {
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("Rice(1KG) Removed!!!        ");
+        digitalWrite(10,HIGH);
+        delay(2000);
+        total = total - 55.00;
+        p3--;
+        count_prod--;
+        lcd.clear();
+        digitalWrite(10,LOW);
+        }
+        else
+        {
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("Not in cart!!!        ");
+        digitalWrite(10,HIGH);
+        delay(2000);
+        lcd.clear();
+        digitalWrite(10,LOW);
+        }
+      }
+      else if ((strncmp(input, "1F005056ACB5", 12) == 0) && (a == 1))
+      {
+        lcd.setCursor(0, 0);
+        lcd.print("Tea(50g) Added            ");
+        lcd.setCursor(0, 1);
+        lcd.print("Price(Rs):45.00        ");
+        total = total + 45.00;
+        count_prod++;
+        digitalWrite(10,HIGH);
+        p4++;
+        delay(2000);
+        lcd.clear();
+        digitalWrite(10,LOW);
+      }
+      else if ((strncmp(input, "1F005056ACB5", 12) == 0) && (a == 0))
+      {
+        if(p4>0)
+        {
+        lcd.clear();
+        total = total - 45.00;
+        lcd.setCursor(0, 0);
+        count_prod--;
+        p4--;
+        lcd.print("Tea(50g) Removed!!!        ");
+        digitalWrite(10,HIGH);
+        delay(2000);
+        lcd.clear();
+        digitalWrite(10,LOW);
+        }
+        else
+        {
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("Not in cart!!!        ");
+        digitalWrite(10,HIGH);
+        delay(2000);
+        lcd.clear();
+        digitalWrite(10,LOW);
+        }
+      }
+      else if ((strncmp(input, "1F004DCB8D14", 12) == 0) && (a == 1))
+      {
+        lcd.setCursor(0, 0);
+        lcd.print("HAIR OIL(100MG) Added            ");
+        lcd.setCursor(0, 1);
+        lcd.print("Price(Rs):65.00        ");
+        total = total + 65.00;
+        count_prod++;
+        digitalWrite(10,HIGH);
+        p5++;
+        delay(2000);
+        lcd.clear();
+        digitalWrite(10,LOW);
+      }
+      else if ((strncmp(input, "1F004DCB8D14", 12) == 0) && (a == 0))
+      {
+        if(p5>0)
+        {
+        lcd.clear();
+        total = total - 45.00;
+        lcd.setCursor(0, 0);
+        count_prod--;
+        p5--;
+        lcd.print("HAIR OIL(100MG) Added         ");
+        digitalWrite(10,HIGH);
+        delay(2000);
+        lcd.clear();
+        digitalWrite(10,LOW);
+        }
+        else
+        {
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("Not in cart!!!        ");
+        digitalWrite(10,HIGH);
+        delay(2000);
+        lcd.clear();
+        digitalWrite(10,LOW);
+        }
+      }
+      else if (strncmp(input, "1F004FFCC76B", 12) == 0)
+      {
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("Total Prod:");
+        lcd.setCursor(11, 0);
+        lcd.print(count_prod);
+        lcd.setCursor(0, 1);
+        lcd.print("Price:");
+        lcd.setCursor(6, 1);
+        lcd.print(total);
+        
+        digitalWrite(10,HIGH);
+        delay(2000);
+
+        lcd.clear();
+        digitalWrite(10,LOW);
+        lcd.setCursor(0, 0);
+        lcd.print("   Thank you        ");
+        lcd.setCursor(0, 1);
+        lcd.print("  for Shopping        ");
+        digitalWrite(10,LOW);
+      }
+    }
+    c1=p1*35.00;
+    c2=p2*38.00;
+    c3=p3*55.00;
+    c4=p4*45.00;
+    c5=p5*65.00;
+  }
+
+}
